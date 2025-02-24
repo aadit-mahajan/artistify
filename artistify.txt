@@ -1,0 +1,24 @@
+<insert_name?default=artistify>
+
+Input data: 
+1. Movies:
+	a. storyline
+
+2. Songs: (this is only from API calls)
+	a. lyrics
+	b. genre
+	c. artist
+
+ML model:
+Storyline part
+	1. Take the storyline as the input
+	2. Split the storyline into multiple scenes 
+	3. assign vibes to each scene
+
+Similarity matching part:
+	1. Get artist(s) from user
+	2. Find all songs from the user's artist. 
+	3. Match lyrics using some similarity score. 
+	4. Match genres using some similarity score. 
+	5. Rank the outputs. 
+
