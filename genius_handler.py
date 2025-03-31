@@ -1,10 +1,9 @@
 import os
-import json
 import logging
 from dotenv import load_dotenv
 import argparse
 import lyricsgenius
-
+import re
 # Set up logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", filename='genius_handler.log', filemode='w')
 logger = logging.getLogger(__name__)
@@ -12,40 +11,69 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 access_token = os.getenv("GENIUS_ACCESS_TOKEN")
 
-def get_lyrics(artist, song_name):
-    
+def clean_title(title):
+    # remove all words in parentheses/brackets
+    title = title.split("(")[0]
+    title = title.split("[")[0]
+    return title.strip()
+
+def clean_lyrics(lyrics):
+    disallowed_chars = re.compile(r"[^a-zA-Z0-9\s.,!?\"'()\-:;]")
+    lyrics = disallowed_chars.sub("", lyrics)
+    lyrics = lyrics.replace("\n", " ")
+    lyrics = lyrics.replace("\r", " ")
+    lyrics = lyrics.strip()
+    return lyrics
+
+def get_lyrics(artist, track_name):
     genius = lyricsgenius.Genius(
         access_token=access_token,
         excluded_terms=["(Remix)", "(Live)"],
         remove_section_headers=True,
-        skip_non_songs=True,
-        verbose=False
+        verbose=False, 
+        timeout=5,
+        retries=3,
+        sleep_time=0.5
     )
+    track_name = clean_title(track_name)
+    track = genius.search_song(title=track_name, artist=artist)
+    if not track:
+        logger.error(f"track '{track_name}' by '{artist}' not found. Trying only with track name.")
+        track = genius.search_song(title=track_name)
 
-    song = genius.search_song(title=song_name, artist=artist)
-    if not song:
-        logger.error(f"Song '{song_name}' by '{artist}' not found.")
-        raise Exception(f"Song '{song_name}' by '{artist}' not found.")
+        if not track:
+            logger.error(f"track '{track_name}' not found.")
+            raise Exception(f"track '{track_name}' not found.")
+        else:
+            logger.info(f"track '{track_name}' found without artist.")
+            track_name = track.title
+            artist = track.primary_artist.name
+            logger.info(f"Artist for '{track_name}' is '{artist}'.")
+            track = genius.search_song(title=track_name, artist=artist)
 
-    if song:
-        lyrics = song.lyrics
-        logger.info(f"Lyrics for {song_name} retrieved successfully.")
+    if not track:
+        logger.error(f"track '{track_name}' not found.")
+        return None
+    if track:
+        lyrics = track.lyrics
+        lyrics = clean_lyrics(lyrics)
+        logger.info(f"Lyrics for {track_name} retrieved successfully.")
         return lyrics
     else:
-        logger.error(f"Failed to retrieve lyrics for {song_name}.")
-        raise Exception(f"Failed to retrieve lyrics for {song_name}.")
+        logger.error(f"Failed to retrieve lyrics for {track_name}.")
+        raise Exception(f"Failed to retrieve lyrics for {track_name}.")
 
 def main():
-    parser = argparse.ArgumentParser(description="Get lyrics for a song by an artist.")
+    parser = argparse.ArgumentParser(description="Get lyrics for a track by an artist.")
     parser.add_argument("-a", type=str, help="Artist name")
-    parser.add_argument("-s", type=str, help="Song name")
+    parser.add_argument("-s", type=str, help="track name")
     args = parser.parse_args()
 
     artist = args.a
-    song_name = args.s
+    track_name = args.s
 
     try:
-        lyrics = get_lyrics(artist, song_name)
+        lyrics = get_lyrics(artist, track_name)
         print(lyrics)
     except Exception as e:
         logger.error(f"Error: {e}", exc_info=True)
