@@ -31,7 +31,6 @@ def get_lyrics(artist, track_name):
         excluded_terms=["(Remix)", "(Live)"],
         remove_section_headers=True,
         verbose=False, 
-        timeout=5,
         retries=3,
         sleep_time=0.5
     )

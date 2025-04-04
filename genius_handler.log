@@ -1,0 +1,170 @@
+2025-04-04 23:57:33,680 - INFO - Starting the process to create and save the corpus.
+2025-04-04 23:57:33,681 - INFO - Wikipedia: language=en, user_agent: artistify_wiki_user (Wikipedia-API/0.8.1; https://github.com/martin-majlis/Wikipedia-API/), extract_format=1
+2025-04-04 23:57:33,686 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Romantic love&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:34,151 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Romance (love)&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:34,624 - INFO - Page for Romantic love found and added to the corpus.
+2025-04-04 23:57:34,624 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Unrequited love&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:34,963 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Unrequited love&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:35,226 - INFO - Page for Unrequited love found and added to the corpus.
+2025-04-04 23:57:35,226 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Breakup&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:35,556 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Breakup&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:36,021 - INFO - Page for Breakup found and added to the corpus.
+2025-04-04 23:57:36,021 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Longing&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:36,314 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Longing&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:36,586 - INFO - Page for Longing found and added to the corpus.
+2025-04-04 23:57:36,586 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Forbidden love&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:36,978 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Forbidden Love&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:37,248 - INFO - Page for Forbidden love found and added to the corpus.
+2025-04-04 23:57:37,248 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Reconciliation (family and relationships)&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:37,537 - WARNING - Page for Reconciliation (family and relationships) does not exist.
+2025-04-04 23:57:37,537 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Toxic relationship&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:38,002 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Psychological abuse&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:38,513 - INFO - Page for Toxic relationship found and added to the corpus.
+2025-04-04 23:57:38,514 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=New relationship energy&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:38,821 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=New relationship energy&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:39,088 - INFO - Page for New relationship energy found and added to the corpus.
+2025-04-04 23:57:39,088 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Jealousy&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:39,431 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Jealousy&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:39,949 - INFO - Page for Jealousy found and added to the corpus.
+2025-04-04 23:57:39,949 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Casual relationship&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:40,277 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Casual dating&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:40,550 - INFO - Page for Casual relationship found and added to the corpus.
+2025-04-04 23:57:40,551 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Infidelity&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:40,971 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Infidelity&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:41,688 - INFO - Page for Infidelity found and added to the corpus.
+2025-04-04 23:57:41,689 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Grief&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:42,099 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Grief&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:42,610 - INFO - Page for Grief found and added to the corpus.
+2025-04-04 23:57:42,610 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Regret&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:42,917 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Regret&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:43,223 - INFO - Page for Regret found and added to the corpus.
+2025-04-04 23:57:43,223 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Loneliness&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:43,633 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Loneliness&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:44,353 - INFO - Page for Loneliness found and added to the corpus.
+2025-04-04 23:57:44,354 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Emotional healing&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:44,658 - WARNING - Page for Emotional healing does not exist.
+2025-04-04 23:57:44,659 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Self-love&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:45,066 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Self-love&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:45,377 - INFO - Page for Self-love found and added to the corpus.
+2025-04-04 23:57:45,377 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Emotional independence&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:45,682 - WARNING - Page for Emotional independence does not exist.
+2025-04-04 23:57:45,682 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Resilience (psychological)&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:45,991 - WARNING - Page for Resilience (psychological) does not exist.
+2025-04-04 23:57:45,991 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Feminism&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:46,501 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Feminism&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:47,018 - INFO - Page for Feminism found and added to the corpus.
+2025-04-04 23:57:47,019 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=LGBT pride&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:47,321 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Pride (LGBTQ culture)&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:47,839 - INFO - Page for LGBT pride found and added to the corpus.
+2025-04-04 23:57:47,840 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Personal identity&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:48,242 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Personal identity&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:48,756 - INFO - Page for Personal identity found and added to the corpus.
+2025-04-04 23:57:48,757 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Coming of age&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:49,214 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Coming of age&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:49,824 - INFO - Page for Coming of age found and added to the corpus.
+2025-04-04 23:57:49,824 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=First love&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:50,188 - WARNING - Page for First love does not exist.
+2025-04-04 23:57:50,188 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Nostalgia&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:50,596 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Nostalgia&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:51,112 - INFO - Page for Nostalgia found and added to the corpus.
+2025-04-04 23:57:51,113 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Freedom (philosophy)&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:51,621 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Free will&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:52,495 - INFO - Page for Freedom (philosophy) found and added to the corpus.
+2025-04-04 23:57:52,496 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Rebellion&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:52,851 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Rebellion&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:53,363 - INFO - Page for Rebellion found and added to the corpus.
+2025-04-04 23:57:53,363 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Party&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:53,772 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Party&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:54,286 - INFO - Page for Party found and added to the corpus.
+2025-04-04 23:57:54,286 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Drinking culture&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:54,694 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Drinking culture&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:55,215 - INFO - Page for Drinking culture found and added to the corpus.
+2025-04-04 23:57:55,216 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Escapism&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:55,544 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Escapism&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:55,811 - INFO - Page for Escapism found and added to the corpus.
+2025-04-04 23:57:55,811 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Carpe diem&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:56,116 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Carpe diem&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:56,380 - INFO - Page for Carpe diem found and added to the corpus.
+2025-04-04 23:57:56,381 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Nightlife&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:56,740 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Nightlife&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:57,048 - INFO - Page for Nightlife found and added to the corpus.
+2025-04-04 23:57:57,048 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Fame&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:57,333 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Fame&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:57,663 - INFO - Page for Fame found and added to the corpus.
+2025-04-04 23:57:57,663 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Materialism&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:58,071 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Materialism&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:58,588 - INFO - Page for Materialism found and added to the corpus.
+2025-04-04 23:57:58,589 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Social media&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:58,896 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Social media&explaintext=1&exsectionformat=wiki
+2025-04-04 23:57:59,569 - INFO - Page for Social media found and added to the corpus.
+2025-04-04 23:57:59,569 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Social criticism&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:57:59,877 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Social criticism&explaintext=1&exsectionformat=wiki
+2025-04-04 23:58:00,147 - INFO - Page for Social criticism found and added to the corpus.
+2025-04-04 23:58:00,148 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Inequality&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:58:00,526 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Inequality&explaintext=1&exsectionformat=wiki
+2025-04-04 23:58:00,838 - INFO - Page for Inequality found and added to the corpus.
+2025-04-04 23:58:00,838 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Popular culture&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:58:01,246 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Popular culture&explaintext=1&exsectionformat=wiki
+2025-04-04 23:58:01,762 - INFO - Page for Popular culture found and added to the corpus.
+2025-04-04 23:58:01,762 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Anxiety&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:58:02,168 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Anxiety&explaintext=1&exsectionformat=wiki
+2025-04-04 23:58:02,640 - INFO - Page for Anxiety found and added to the corpus.
+2025-04-04 23:58:02,640 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Depression (mood)&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:58:03,090 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Depression (mood)&explaintext=1&exsectionformat=wiki
+2025-04-04 23:58:03,600 - INFO - Page for Depression (mood) found and added to the corpus.
+2025-04-04 23:58:03,601 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Self-doubt&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:58:04,012 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Doubt&explaintext=1&exsectionformat=wiki
+2025-04-04 23:58:04,319 - INFO - Page for Self-doubt found and added to the corpus.
+2025-04-04 23:58:04,320 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Existential crisis&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:58:04,729 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Existential crisis&explaintext=1&exsectionformat=wiki
+2025-04-04 23:58:05,450 - INFO - Page for Existential crisis found and added to the corpus.
+2025-04-04 23:58:05,450 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Social alienation&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:58:05,856 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Social alienation&explaintext=1&exsectionformat=wiki
+2025-04-04 23:58:06,370 - INFO - Page for Social alienation found and added to the corpus.
+2025-04-04 23:58:06,371 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Dream&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:58:06,777 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Dream&explaintext=1&exsectionformat=wiki
+2025-04-04 23:58:07,292 - INFO - Page for Dream found and added to the corpus.
+2025-04-04 23:58:07,293 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Self-belief&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:58:07,596 - WARNING - Page for Self-belief does not exist.
+2025-04-04 23:58:07,596 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Success&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:58:07,904 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Success&explaintext=1&exsectionformat=wiki
+2025-04-04 23:58:08,176 - INFO - Page for Success found and added to the corpus.
+2025-04-04 23:58:08,176 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Ambition&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:58:08,517 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Ambition&explaintext=1&exsectionformat=wiki
+2025-04-04 23:58:09,029 - INFO - Page for Ambition found and added to the corpus.
+2025-04-04 23:58:09,029 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Utopia&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:58:09,439 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Utopia&explaintext=1&exsectionformat=wiki
+2025-04-04 23:58:09,954 - INFO - Page for Utopia found and added to the corpus.
+2025-04-04 23:58:09,955 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Fantasy&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:58:10,322 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Fantasy&explaintext=1&exsectionformat=wiki
+2025-04-04 23:58:10,874 - INFO - Page for Fantasy found and added to the corpus.
+2025-04-04 23:58:10,875 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Surrealism&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:58:11,385 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Surrealism&explaintext=1&exsectionformat=wiki
+2025-04-04 23:58:12,104 - INFO - Page for Surrealism found and added to the corpus.
+2025-04-04 23:58:12,104 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Mythology&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:58:12,509 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Myth&explaintext=1&exsectionformat=wiki
+2025-04-04 23:58:12,979 - INFO - Page for Mythology found and added to the corpus.
+2025-04-04 23:58:12,980 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Space in fiction&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:58:13,270 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Space in fiction&explaintext=1&exsectionformat=wiki
+2025-04-04 23:58:13,536 - INFO - Page for Space in fiction found and added to the corpus.
+2025-04-04 23:58:13,537 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Alternate reality&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:58:13,844 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Alternate reality&explaintext=1&exsectionformat=wiki
+2025-04-04 23:58:14,151 - INFO - Page for Alternate reality found and added to the corpus.
+2025-04-04 23:58:14,151 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Friendship&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:58:14,559 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Friendship&explaintext=1&exsectionformat=wiki
+2025-04-04 23:58:15,074 - INFO - Page for Friendship found and added to the corpus.
+2025-04-04 23:58:15,075 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Loyalty&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:58:15,399 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Loyalty&explaintext=1&exsectionformat=wiki
+2025-04-04 23:58:15,890 - INFO - Page for Loyalty found and added to the corpus.
+2025-04-04 23:58:15,890 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Family&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:58:16,308 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Family&explaintext=1&exsectionformat=wiki
+2025-04-04 23:58:17,024 - INFO - Page for Family found and added to the corpus.
+2025-04-04 23:58:17,024 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Empathy&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:58:17,527 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=extracts&titles=Empathy&explaintext=1&exsectionformat=wiki
+2025-04-04 23:58:17,839 - INFO - Page for Empathy found and added to the corpus.
+2025-04-04 23:58:17,839 - INFO - Request URL: https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=info&titles=Human connection&inprop=protection|talkid|watched|watchers|visitingwatchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle|varianttitles
+2025-04-04 23:58:18,120 - WARNING - Page for Human connection does not exist.
+2025-04-04 23:58:18,124 - INFO - Corpus successfully saved to corpus.json.
+2025-04-04 23:58:31,883 - INFO - Lyrics for Thriller retrieved successfully.
+2025-04-04 23:58:31,884 - INFO - Generating ESA vectors.
+2025-04-04 23:58:31,884 - INFO - Corpus successfully loaded from corpus.json.
