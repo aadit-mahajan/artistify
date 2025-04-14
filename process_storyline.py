@@ -37,23 +37,34 @@ def load_corpus(corpus_file="corpus.json"):
         with open(corpus_file, "r") as file:
             corpus_dict = json.load(file)
         logging.info(f"Corpus successfully loaded from {corpus_file}.")
-        for topic, text in corpus_dict.items():
-            tokens = word_tokenize(text.lower())
-            tokens = [word for word in tokens if word.isalnum()]
-            tokens = [word for word in tokens if word not in stopwords.words("english")]
-            lemmatizer = WordNetLemmatizer()
-            tokens = [lemmatizer.lemmatize(word) for word in tokens]
-            corpus_dict[topic] = " ".join(tokens)
         return corpus_dict
     except Exception as e:
         logging.error(f"Failed to load corpus from {corpus_file}: {e}")
         return {}
 
 
+def lemmatize_corpus(output_file="lemmatized_corpus.json"):
+    corpus_dict = load_corpus()
+    lemmatizer = WordNetLemmatizer()
+
+    for topic, text in corpus_dict.items():
+        tokens = word_tokenize(text.lower())
+        tokens = [word for word in tokens if word.isalnum()]
+        tokens = [word for word in tokens if word not in stopwords.words("english")]
+        tokens = [lemmatizer.lemmatize(word) for word in tokens]
+        corpus_dict[topic] = " ".join(tokens)
+
+    try:
+        with open(output_file, "w") as file:
+            json.dump(corpus_dict, file, indent=4)
+        logging.info(f"Lemmatized corpus successfully saved to {output_file}.")
+    except Exception as e:
+        logging.error(f"Failed to save lemmatized corpus: {e}")
+
+
 def generate_esa_vectors_for_story(story):
     logging.info("Generating ESA vectors for story.")
-
-    corpus = load_corpus()
+    corpus = load_corpus("lemmatized_corpus.json")
     if not corpus:
         logging.error("Corpus is empty or could not be loaded.")
         return [], []
