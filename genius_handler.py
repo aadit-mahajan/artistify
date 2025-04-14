@@ -32,7 +32,8 @@ def get_lyrics(artist, track_name):
         remove_section_headers=True,
         verbose=False, 
         retries=3,
-        sleep_time=0.5
+        sleep_time=0.5, 
+        timeout=10
     )
     track_name = clean_title(track_name)
     track = genius.search_song(title=track_name, artist=artist)
