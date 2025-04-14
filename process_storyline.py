@@ -114,7 +114,8 @@ if __name__ == "__main__":
     despite these struggles, he maintains hope and determination, holding onto the belief that one day he will 
     succeed. After enduring months of hardship, Chris is finally offered a full-time position at the firm. His hard 
     work and perseverance pay off as he secures the job, and his life begins to turn around. As he walks out of the 
-    office with his son, he smiles, knowing that all the sacrifices"""
+    office with his son, he smiles, knowing that all the sacrifices were worth it, marking the beginning of a new 
+    chapter in his life."""
 
     sentences, esa_vectors = generate_esa_vectors_for_story(story)
 
