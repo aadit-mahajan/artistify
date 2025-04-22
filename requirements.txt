@@ -1,0 +1,10 @@
+pyspark
+dotenv
+lyricsgenius
+nltk
+pandas
+numpy
+requests
+scikit-learn
+beautifulsoup4
+

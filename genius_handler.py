@@ -5,7 +5,7 @@ import argparse
 import lyricsgenius
 import re
 # Set up logging
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", filename='genius_handler.log', filemode='w')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", filename='debug.log')
 logger = logging.getLogger(__name__)
 
 load_dotenv()

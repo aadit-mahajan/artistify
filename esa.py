@@ -18,7 +18,7 @@ from genius_handler import get_lyrics
 import wikipediaapi
 from nltk.corpus import stopwords
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", filename="esa.log", filemode="w")
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", filename="debug.log")
 logger = logging.getLogger(__name__)
 
 def load_lyrics(artist_name, track_name):

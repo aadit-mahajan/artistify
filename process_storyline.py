@@ -14,8 +14,7 @@ from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", filename='debug.log')
 
 def clean_text(text):
     text = re.sub(r"\W+", " ", text.lower())
@@ -32,7 +31,7 @@ def preprocess_sentence(sentence):
     return " ".join(tokens)
 
 
-def load_corpus(corpus_file="corpus.json"):
+def load_corpus(corpus_file="./corpus/corpus.json"):
     try:
         with open(corpus_file, "r") as file:
             corpus_dict = json.load(file)
@@ -43,7 +42,7 @@ def load_corpus(corpus_file="corpus.json"):
         return {}
 
 
-def lemmatize_corpus(output_file="lemmatized_corpus.json"):
+def lemmatize_corpus(output_file="./corpus/lemmatized_corpus.json"):
     corpus_dict = load_corpus()
     lemmatizer = WordNetLemmatizer()
 
@@ -64,7 +63,7 @@ def lemmatize_corpus(output_file="lemmatized_corpus.json"):
 
 def generate_esa_vectors_for_story(story):
     logging.info("Generating ESA vectors for story.")
-    corpus = load_corpus("lemmatized_corpus.json")
+    corpus = load_corpus("./corpus/lemmatized_corpus.json")
     if not corpus:
         logging.error("Corpus is empty or could not be loaded.")
         return [], []
