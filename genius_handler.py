@@ -18,12 +18,49 @@ def clean_title(title):
     return title.strip()
 
 def clean_lyrics(lyrics):
-    disallowed_chars = re.compile(r"[^a-zA-Z0-9\s.,!?\"'()\-:;]")
+    disallowed_chars = re.compile(r"[^a-zA-Z0-9\s.,!?\"\'()\-:;]")
     lyrics = disallowed_chars.sub("", lyrics)
     lyrics = lyrics.replace("\n", " ")
     lyrics = lyrics.replace("\r", " ")
     lyrics = lyrics.strip()
     return lyrics
+
+def get_artist_top_tracks(artist_name, top_n=10):
+    genius = lyricsgenius.Genius(
+        access_token=access_token,
+        excluded_terms=["(Remix)", "(Live)"],
+        remove_section_headers=True,
+        verbose=False, 
+        retries=3,
+        sleep_time=0.5, 
+        timeout=10
+    )
+    try:
+        artist = genius.search_artist(
+            artist_name=artist_name,
+            max_songs=top_n,
+            sort="popularity",
+            get_full_info=True,
+            per_page=top_n
+            )
+        
+        top_tracks_lyrics = []
+        for song in artist.songs:
+            track_name = song.title
+            track_name = clean_title(track_name)
+            print(f"Processing track: {track_name}, artist: {artist_name}")
+            lyrics = song.lyrics
+            lyrics = clean_lyrics(lyrics)
+            if lyrics:
+                top_tracks_lyrics.append([artist_name, track_name, lyrics])
+            else:
+                logger.error(f"Lyrics for {track_name} not found.")
+
+    except Exception as e:
+        logger.error(f"Error retrieving top tracks for {artist_name}: {e}")
+        return []
+
+    return top_tracks_lyrics
 
 def get_lyrics(artist, track_name):
     genius = lyricsgenius.Genius(
@@ -36,20 +73,17 @@ def get_lyrics(artist, track_name):
         timeout=10
     )
     track_name = clean_title(track_name)
-    track = genius.search_song(title=track_name, artist=artist)
+    track = genius.search_lyrics(search_term=track_name)
+    
     if not track:
-        logger.error(f"track '{track_name}' by '{artist}' not found. Trying only with track name.")
-        track = genius.search_song(title=track_name)
-
-        if not track:
-            logger.error(f"track '{track_name}' not found.")
-            raise Exception(f"track '{track_name}' not found.")
-        else:
-            logger.info(f"track '{track_name}' found without artist.")
-            track_name = track.title
-            artist = track.primary_artist.name
-            logger.info(f"Artist for '{track_name}' is '{artist}'.")
-            track = genius.search_song(title=track_name, artist=artist)
+        logger.error(f"track '{track_name}' not found.")
+        raise Exception(f"track '{track_name}' not found.")
+    else:
+        logger.info(f"track '{track_name}' found without artist.")
+        track_name = track.title
+        artist = track.primary_artist.name
+        logger.info(f"Artist for '{track_name}' is '{artist}'.")
+        track = genius.search_song(title=track_name, artist=artist)
 
     if not track:
         logger.error(f"track '{track_name}' not found.")
@@ -80,4 +114,4 @@ def main():
         print(f"Error: {e}")
 
 if __name__ == "__main__":
-    main()
+    print(get_artist_top_tracks("Taylor Swift", 5))

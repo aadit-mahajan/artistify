@@ -7,13 +7,11 @@ from nltk.tokenize import sent_tokenize
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
-from spotify_handler import get_artist_top_tracks, get_access_token
-from genius_handler import get_lyrics
+from genius_handler import get_artist_top_tracks
 import pandas as pd
 from pyspark.sql import SparkSession
 import multiprocessing
 import requests
-from requests.adapters import HTTPAdapter, Retry
 
 num_cores = multiprocessing.cpu_count()
 num_partitions = num_cores * 2
@@ -23,14 +21,14 @@ logger = logging.getLogger(__name__)
 logger.info(f"Number of CPU cores: {num_cores}")
 logger.info(f"Number of partitions: {num_partitions}")
 
-def scrape_billboard_100_artists(session):
+def scrape_billboard_100_artists():
     url = 'https://www.billboard.com/charts/artist-100/'
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
     
     try:
-        response = session.get(url, headers=headers)
+        response = requests.get(url, headers=headers)
         
         # Parse the HTML content
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -61,31 +59,19 @@ def preprocess_sentence(sentence):
     tokens = [lemmatizer.lemmatize(word) for word in tokens]
     return " ".join(tokens)
 
-def generate_artists_corpus(artists, session):
-    token = get_access_token(session=session)
+def generate_artists_corpus(artists):
     artists_df = pd.DataFrame(columns=['artist', 'track', 'lyrics'])
     for artist in artists:
         try:
             # Get the top tracks for the artist
-            top_tracks = get_artist_top_tracks(artist_name=artist, token=token, session=session)
+            top_tracks = get_artist_top_tracks(artist_name=artist,top_n=10)
             if not top_tracks:
                 logger.error(f"No top tracks found for {artist}.")
                 continue
             
-            # Get the lyrics for each track
             for track in top_tracks:
-                track_name = track['name']
-                print(f"Processing track: {track_name}, artist: {artist}")
-                lyrics = get_lyrics(artist=artist, track_name=track_name)
-                if lyrics:
-                    # Preprocess the lyrics
-                    processed_lyrics = preprocess_sentence(lyrics)
-                    new_row = pd.DataFrame([{'artist': artist, 'track': track_name, 'lyrics': processed_lyrics}])
-                    artists_df = pd.concat([artists_df, new_row], ignore_index=True)
-                else:
-                    logger.error(f"Lyrics not found for {artist} - {track}.")
-                    continue
-
+                artists_df = pd.concat([artists_df, pd.DataFrame([track], columns=['artist', 'track', 'lyrics'])], ignore_index=True)
+            # Save the artist data to a CSV file
             print(f"Processed artist: {artist}")
             logger.info(f"Processed artist: {artist}")
         except Exception as e:
@@ -150,23 +136,9 @@ def get_lyrics_partition(partition):
 
 if __name__ == "__main__":
 
-    # start a requests session for batch requests to spotify API
-    session = requests.Session()
-
-    retry_strategy = Retry(
-    total=5,
-    status_forcelist=[429, 500, 502, 503, 504],
-    allowed_methods=["GET", "POST"],
-    backoff_factor=1
-    )
-    adapter = HTTPAdapter(max_retries=retry_strategy)
-    session.mount("https://", adapter)
-    session.mount("http://", adapter)
-    DEFAULT_TIMEOUT = 10
-
     GENERATE_CORPUS = True
 
-    artists = scrape_billboard_100_artists(session)
+    artists = scrape_billboard_100_artists()
     
     # check if the artists.txt file exists
     if os.path.exists('artists.txt'):
@@ -176,7 +148,8 @@ if __name__ == "__main__":
             if not artists:
                 print("No new artists to add.")
                 GENERATE_CORPUS = False
-            print(f"New artists added: {artists}")
+            else:
+                print(f"New artists added: {artists}")
 
             # update the artists.txt file
             with open('artists.txt', 'a') as f:
@@ -189,7 +162,7 @@ if __name__ == "__main__":
     
     # Generate the artists corpus if required
     if GENERATE_CORPUS:
-        artists_df = generate_artists_corpus(artists, session)
+        artists_df = generate_artists_corpus(artists)
     else:
         # Load the artists data from the CSV file
         artists_df = pd.read_csv('artists_data.csv')
