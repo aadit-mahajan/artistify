@@ -80,7 +80,7 @@ def create_and_save_corpus(topics_file="topics.csv", output_dir="corpus", force_
     for topic in wiki_titles:
         page = wiki.page(topic)
         if page.exists():
-            text = clean_text(page.text) 
+            text = clean_text(page.summary) 
             corpus_dict[topic] = text
             logger.info(f"Page for {topic} found and added to the corpus.")
         else:

@@ -73,8 +73,8 @@ def get_lyrics(artist, track_name):
         timeout=10
     )
     track_name = clean_title(track_name)
-    track = genius.search_lyrics(search_term=track_name)
-    
+    track = genius.search_song(title=track_name)
+    print(track)
     if not track:
         logger.error(f"track '{track_name}' not found.")
         raise Exception(f"track '{track_name}' not found.")
@@ -114,4 +114,4 @@ def main():
         print(f"Error: {e}")
 
 if __name__ == "__main__":
-    print(get_artist_top_tracks("Taylor Swift", 5))
+    main()
