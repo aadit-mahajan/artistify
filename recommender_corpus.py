@@ -96,15 +96,16 @@ def load_corpus(corpus_file):
 def generate_artist_esa_vectors(text):
     logger.info("Generating ESA vectors for artist.")
     
-    corpus = load_corpus('./corpus/corpus.json')
+    corpus = load_corpus('./corpus/lemmatized_corpus.json')
     if not corpus:
         logger.error("Corpus is empty or could not be loaded.")
         return [], []
-    
+
     sentences = sent_tokenize(text)
     processed_sentences = [preprocess_sentence(s) for s in sentences]
     processed_corpus = list(corpus.values())
     all_documents = processed_sentences + processed_corpus
+
     vectorizer = TfidfVectorizer(stop_words="english")
     tfidf_matrix = vectorizer.fit_transform(all_documents)
 
@@ -113,8 +114,14 @@ def generate_artist_esa_vectors(text):
         similarities = cosine_similarity(tfidf_matrix[i:i+1], tfidf_matrix[len(processed_sentences):])
         esa_vector = similarities.flatten()
         esa_vectors.append(esa_vector)
-
-    return esa_vectors, processed_sentences
+    
+    if esa_vectors:
+        esa_vectors = np.mean(esa_vectors, axis=0)
+        print(esa_vectors.shape)
+        return esa_vectors.tolist()
+    else:
+        logger.error("No ESA vectors generated.")
+    return []
 
 def get_lyrics_partition(partition):
     for entry in partition:
@@ -123,7 +130,8 @@ def get_lyrics_partition(partition):
         track = entry[1]
         logger.info(f"Processing lyrics for {artist} - {track}.")
         try:
-            esa_vector, _ = generate_artist_esa_vectors(lyrics)
+            esa_vector = generate_artist_esa_vectors(lyrics)
+
             if not esa_vector:
                 logger.error(f"ESA vector generation failed for {entry}.")
                 continue
