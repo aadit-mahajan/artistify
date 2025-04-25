@@ -12,7 +12,7 @@ import re
 import os
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.stem import WordNetLemmatizer
-from nltk.tokenize import word_tokenize
+from nltk.tokenize import sent_tokenize, word_tokenize
 from sklearn.metrics.pairwise import cosine_similarity
 from genius_handler import get_lyrics
 import wikipediaapi
@@ -28,15 +28,22 @@ def load_lyrics(artist_name, track_name):
         return None
     return lyrics
 
-def preprocess_lyrics(lyrics):
-    if not lyrics:
+def preprocess_text(text):
+    import nltk
+    from nltk.tokenize import word_tokenize
+    from nltk.corpus import stopwords
+    from nltk.stem import WordNetLemmatizer
+
+    nltk.data.path.append("./nltk_data")
+
+    if not text:
         return ""
 
-    tokens = nltk.word_tokenize(lyrics.lower())
+    tokens = word_tokenize(text.lower())
     tokens = [word for word in tokens if word.isalnum()]
     tokens = [word for word in tokens if word not in stopwords.words("english")]
     
-    lemmatizer = nltk.WordNetLemmatizer()
+    lemmatizer = WordNetLemmatizer()
     tokens = [lemmatizer.lemmatize(word) for word in tokens]
     
     return " ".join(tokens)  # Return as a string
@@ -102,16 +109,6 @@ def load_corpus(corpus_file="corpus/corpus.json"):
     except Exception as e:
         logger.error(f"Failed to load corpus from {corpus_file}: {e}")
         return {}
-    
-def load_lemmatized_corpus(corpus_file="corpus/lemmatized_corpus.json"):
-    try:
-        with open(corpus_file, "r") as file:
-            corpus_dict = json.load(file)
-        logger.info(f"Corpus successfully loaded from {corpus_file}.")
-        return corpus_dict
-    except Exception as e:
-        logger.error(f"Failed to load corpus from {corpus_file}: {e}")
-        return {}
 
 def lemmatize_corpus(output_dir="corpus"):
     os.makedirs(output_dir, exist_ok=True)
@@ -135,46 +132,76 @@ def lemmatize_corpus(output_dir="corpus"):
     except Exception as e:
         logger.error(f"Failed to save lemmatized corpus: {e}")
 
-def generate_esa_vectors(lyrics):
-    logger.info("Generating ESA vectors.")
+def generate_esa_vectors(text):
+    # logger.info("Generating ESA vectors.")
 
-    corpus = load_lemmatized_corpus()
+    # corpus = load_corpus(corpus_file="corpus/lemmatized_corpus.json")
+    # if not corpus:
+    #     logger.error("Corpus is empty or could not be loaded.")
+    #     return None
+
+    # lyrics = preprocess_lyrics(lyrics)
+    
+    # if not lyrics.strip():
+    #     logger.error("Lyrics are empty after preprocessing.")
+    #     return None
+
+    # all_text = [lyrics] + list(corpus.values())
+
+    # vectorizer = TfidfVectorizer(stop_words="english")
+    # tfidf_mat = vectorizer.fit_transform(all_text)
+
+    # if tfidf_mat.shape[0] <= 1:
+    #     logger.error("Not enough documents in TF-IDF matrix to compute ESA vectors.")
+    #     return None
+
+    # similarities = cosine_similarity(tfidf_mat[0:1], tfidf_mat[1:])
+
+    # esa_vector = np.zeros(len(corpus))  
+    # for i, sim in enumerate(similarities[0]):
+    #     esa_vector[i] = sim
+
+    # return esa_vector
+    logger.info("Generating ESA vectors for artist.")
+    
+    corpus = load_corpus('./corpus/lemmatized_corpus.json')
     if not corpus:
         logger.error("Corpus is empty or could not be loaded.")
-        return None
+        return [], []
 
-    lyrics = preprocess_lyrics(lyrics)
-    
-    if not lyrics.strip():
-        logger.error("Lyrics are empty after preprocessing.")
-        return None
-
-    all_text = [lyrics] + list(corpus.values())
+    sentences = sent_tokenize(text)
+    processed_sentences = [preprocess_text(s) for s in sentences]
+    processed_corpus = list(corpus.values())
+    all_documents = processed_sentences + processed_corpus
 
     vectorizer = TfidfVectorizer(stop_words="english")
-    tfidf_mat = vectorizer.fit_transform(all_text)
+    tfidf_matrix = vectorizer.fit_transform(all_documents)
 
-    if tfidf_mat.shape[0] <= 1:
-        logger.error("Not enough documents in TF-IDF matrix to compute ESA vectors.")
-        return None
-
-    similarities = cosine_similarity(tfidf_mat[0:1], tfidf_mat[1:])
-
-    esa_vector = np.zeros(len(corpus))  
-    for i, sim in enumerate(similarities[0]):
-        esa_vector[i] = sim
-
-    return esa_vector
+    esa_vectors = []
+    for i in range(len(processed_sentences)):
+        similarities = cosine_similarity(tfidf_matrix[i:i+1], tfidf_matrix[len(processed_sentences):])
+        esa_vector = similarities.flatten()
+        esa_vectors.append(esa_vector)
+    
+    if esa_vectors:
+        esa_vectors = np.mean(esa_vectors, axis=0)
+        print(esa_vectors.shape)
+        return esa_vectors.tolist()
+    else:
+        logger.error("No ESA vectors generated.")
+    return []
 
 if __name__ == "__main__":
     create_and_save_corpus()
 
     lemmatize_corpus()
 
+    lem_corp_path = os.path.join("corpus", "lemmatized_corpus.json")
+
     lyrics = load_lyrics("Rascal Flatts", "Life is a highway")
     if lyrics:
         esa_vector = generate_esa_vectors(lyrics)
-        keys = load_lemmatized_corpus().keys()
+        keys = load_corpus(corpus_file=lem_corp_path).keys()
         if esa_vector is not None:
             for i, key in enumerate(keys):
                 print(f"Similarity with {key}: {esa_vector[i]}")

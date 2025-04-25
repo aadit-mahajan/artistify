@@ -1,201 +1,124 @@
-import requests
-from bs4 import BeautifulSoup
-import json
-import logging
 import os
-from nltk.tokenize import sent_tokenize
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+import logging
+import requests
 import numpy as np
-from genius_handler import get_artist_top_tracks
 import pandas as pd
+from bs4 import BeautifulSoup
 from pyspark.sql import SparkSession
 import multiprocessing
-import requests
+from genius_handler import get_artist_top_tracks
+from esa import generate_esa_vectors
 
-num_cores = multiprocessing.cpu_count()
-num_partitions = num_cores * 2
-
+# Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', filename='debug.log', filemode='w')
 logger = logging.getLogger(__name__)
+
+# Determine optimal number of partitions
+num_cores = multiprocessing.cpu_count()
+num_partitions = num_cores * 2
 logger.info(f"Number of CPU cores: {num_cores}")
 logger.info(f"Number of partitions: {num_partitions}")
 
 def scrape_billboard_100_artists():
     url = 'https://www.billboard.com/charts/artist-100/'
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-    }
-    
+    headers = {'User-Agent': 'Mozilla/5.0'}
     try:
         response = requests.get(url, headers=headers)
-        
-        # Parse the HTML content
         soup = BeautifulSoup(response.text, 'html.parser')
-        
-        # Find all artist entries on the page
         artist_elements = soup.select('h3.c-title.a-no-trucate.a-font-primary-bold-s')
         artists = [artist.get_text(strip=True) for artist in artist_elements]
-        print(artists)
-        logger.info(f"Found {len(artists)} artists on the Billboard Hot 100 page.")
+        logger.info(f"Found {len(artists)} artists on Billboard.")
+        return list(set(artists))
     except Exception as e:
-        logger.error(f"An error occurred: {e}")
+        logger.error(f"Error scraping Billboard: {e}")
         return []
-    
-    return list(set(artists))
 
-def preprocess_sentence(sentence):
-    import nltk
-    from nltk.tokenize import word_tokenize
-    from nltk.corpus import stopwords
-    from nltk.stem import WordNetLemmatizer
+def get_new_artists(scraped, filepath='artists.txt'):
+    if os.path.exists(filepath):
+        with open(filepath, 'r') as f:
+            existing = f.read().splitlines()
+        return list(set(scraped) - set(existing))
+    return scraped
 
-    nltk.data.path.append("./nltk_data")
-
-    tokens = word_tokenize(sentence.lower())
-    tokens = [word for word in tokens if word.isalnum()]
-    tokens = [word for word in tokens if word not in stopwords.words("english")]
-    lemmatizer = WordNetLemmatizer()
-    tokens = [lemmatizer.lemmatize(word) for word in tokens]
-    return " ".join(tokens)
+def save_artists_to_file(artists, filepath='artists.txt'):
+    with open(filepath, 'a' if os.path.exists(filepath) else 'w') as f:
+        f.write('\n'.join(artists) + '\n')
+    logger.info(f"Saved {len(artists)} new artists to {filepath}")
 
 def generate_artists_corpus(artists):
-    artists_df = pd.DataFrame(columns=['artist', 'track', 'lyrics'])
+    collected_df = pd.DataFrame(columns=['artist', 'track', 'lyrics'])
     for artist in artists:
         try:
-            # Get the top tracks for the artist
-            top_tracks = get_artist_top_tracks(artist_name=artist,top_n=10)
+            top_tracks = get_artist_top_tracks(artist_name=artist, top_n=10)
             if not top_tracks:
-                logger.error(f"No top tracks found for {artist}.")
+                logger.warning(f"No top tracks for {artist}")
                 continue
-            
             for track in top_tracks:
-                artists_df = pd.concat([artists_df, pd.DataFrame([track], columns=['artist', 'track', 'lyrics'])], ignore_index=True)
-            # Save the artist data to a CSV file
-            print(f"Processed artist: {artist}")
+                collected_df = pd.concat([collected_df, pd.DataFrame([track], columns=['artist', 'track', 'lyrics'])], ignore_index=True)
             logger.info(f"Processed artist: {artist}")
         except Exception as e:
             logger.error(f"Error processing artist {artist}: {e}", exc_info=True)
-            continue
-    
-        # save artists_df to a csv file
-    artists_df.to_csv('artists_data.csv', index=False)
-    
-    return artists_df
-
-def load_corpus(corpus_file):
-    try:
-        with open(corpus_file, "r") as file:
-            corpus_dict = json.load(file)
-        logging.info(f"Corpus successfully loaded from {corpus_file}.")
-        return corpus_dict
-    except Exception as e:
-        logging.error(f"Failed to load corpus from {corpus_file}: {e}")
-        return {}
-    
-def generate_artist_esa_vectors(text):
-    logger.info("Generating ESA vectors for artist.")
-    
-    corpus = load_corpus('./corpus/lemmatized_corpus.json')
-    if not corpus:
-        logger.error("Corpus is empty or could not be loaded.")
-        return [], []
-
-    sentences = sent_tokenize(text)
-    processed_sentences = [preprocess_sentence(s) for s in sentences]
-    processed_corpus = list(corpus.values())
-    all_documents = processed_sentences + processed_corpus
-
-    vectorizer = TfidfVectorizer(stop_words="english")
-    tfidf_matrix = vectorizer.fit_transform(all_documents)
-
-    esa_vectors = []
-    for i in range(len(processed_sentences)):
-        similarities = cosine_similarity(tfidf_matrix[i:i+1], tfidf_matrix[len(processed_sentences):])
-        esa_vector = similarities.flatten()
-        esa_vectors.append(esa_vector)
-    
-    if esa_vectors:
-        esa_vectors = np.mean(esa_vectors, axis=0)
-        print(esa_vectors.shape)
-        return esa_vectors.tolist()
-    else:
-        logger.error("No ESA vectors generated.")
-    return []
+    return collected_df
 
 def get_lyrics_partition(partition):
-    for entry in partition:
-        lyrics = entry[2]
-        artist = entry[0]
-        track = entry[1]
-        logger.info(f"Processing lyrics for {artist} - {track}.")
+    for artist, track, lyrics in partition:
         try:
-            esa_vector = generate_artist_esa_vectors(lyrics)
-
-            if not esa_vector:
-                logger.error(f"ESA vector generation failed for {entry}.")
-                continue
-            # Convert the ESA vector to a 2D array
-            esa_vector = np.array(esa_vector).reshape(1, -1)
-            yield (artist, track, lyrics, esa_vector.tolist())
-        except Exception as e:
-            logger.error(f"Error processing lyrics {entry}: {e}", exc_info=True)
-            continue
-
-if __name__ == "__main__":
-
-    GENERATE_CORPUS = True
-
-    artists = scrape_billboard_100_artists()
-    
-    # check if the artists.txt file exists
-    if os.path.exists('artists.txt'):
-        with open('artists.txt', 'r') as f:
-            existing_artists = f.read().splitlines()
-            artists = list(set(artists) - set(existing_artists))
-            if not artists:
-                print("No new artists to add.")
-                GENERATE_CORPUS = False
+            esa_vector = generate_esa_vectors(lyrics)
+            if esa_vector:
+                yield (artist, track, lyrics, np.array(esa_vector).reshape(1, -1).tolist())
             else:
-                print(f"New artists added: {artists}")
+                logger.warning(f"Empty ESA vector for {artist} - {track}")
+        except Exception as e:
+            logger.error(f"ESA error for {artist} - {track}: {e}", exc_info=True)
 
-            # update the artists.txt file
-            with open('artists.txt', 'a') as f:
-                f.write('\n'.join(artists))
-                logger.info(f"Artists added to artists.txt: {artists}")
-    else:
-        with open('artists.txt', 'w') as f:
-            f.write('\n'.join(artists))
-            logger.info(f"Artists saved to artists.txt: {artists}")
-    
-    # Generate the artists corpus if required
-    if GENERATE_CORPUS:
-        artists_df = generate_artists_corpus(artists)
-    else:
-        # Load the artists data from the CSV file
-        artists_df = pd.read_csv('artists_data.csv')
-        print(f"Loaded {len(artists_df['artist'].unique())} artists from artists_data.csv.")
+def remove_existing_tracks(new_df, existing_file='esa_vectors_all_lyrics.csv'):
+    if not os.path.exists(existing_file):
+        return new_df
+    existing = pd.read_csv(existing_file, usecols=['artist', 'track'])
+    before = len(new_df)
+    filtered_df = new_df.merge(existing, on=['artist', 'track'], how='left', indicator=True)
+    new_only = filtered_df[filtered_df['_merge'] == 'left_only'].drop(columns=['_merge'])
+    logger.info(f"Removed {before - len(new_only)} already processed track(s).")
+    return new_only
 
-    logger.info("Initialising spark session for recommender.")
-    # Generate ESA vectors for each artist
-    logger.info("Generating ESA vectors for each artist.")
+def main():
+    scraped_artists = scrape_billboard_100_artists()
+    new_artists = get_new_artists(scraped_artists)
+
+    if not new_artists:
+        logger.info("No new artists to process.")
+        return
+
+    save_artists_to_file(new_artists)
+    new_artist_data = generate_artists_corpus(new_artists)
+    if new_artist_data.empty:
+        logger.warning("No lyrics fetched for new artists.")
+        return
+
+    new_artist_data = remove_existing_tracks(new_artist_data)
+
+    if new_artist_data.empty:
+        logger.info("All fetched tracks already exist in ESA vector file.")
+        return
+
     spark = SparkSession.builder.appName("ESA vector generation").getOrCreate()
     sc = spark.sparkContext
 
-    artists_df = spark.read.csv('artists_data.csv', header=True, inferSchema=True).toPandas()
-    artists_df['esa_vector'] = None
-    artists_df['lyrics'] = artists_df['lyrics'].astype(str)
-    esa_rdd = sc.parallelize(
-        list(zip(artists_df['artist'], artists_df['track'], artists_df['lyrics'])),
+    rdd_input = sc.parallelize(
+        list(zip(new_artist_data['artist'], new_artist_data['track'], new_artist_data['lyrics'].astype(str))),
         numSlices=num_partitions
     )
-    esa_vectors = esa_rdd.mapPartitions(get_lyrics_partition)
-    esa_vectors = esa_vectors.collect()
-    # convert to dataframe
-    esa_vectors_df = pd.DataFrame(esa_vectors, columns=['artist', 'track', 'lyrics', 'esa_vector'])
-    # Save the DataFrame to a CSV file
-    esa_vectors_df.to_csv('esa_vectors_all_lyrics.csv', index=False)
-
+    esa_vectors = rdd_input.mapPartitions(get_lyrics_partition).collect()
     sc.stop()
 
+    if esa_vectors:
+        esa_df = pd.DataFrame(esa_vectors, columns=['artist', 'track', 'lyrics', 'esa_vector'])
+        mode = 'a' if os.path.exists('esa_vectors_all_lyrics.csv') else 'w'
+        header = not os.path.exists('esa_vectors_all_lyrics.csv')
+        esa_df.to_csv('esa_vectors_all_lyrics.csv', index=False, mode=mode, header=header)
+        logger.info("ESA vectors appended to esa_vectors_all_lyrics.csv.")
+    else:
+        logger.warning("No ESA vectors generated for new artists.")
 
+if __name__ == "__main__":
+    main()

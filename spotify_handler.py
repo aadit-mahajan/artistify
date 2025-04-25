@@ -1,12 +1,10 @@
 from dotenv import load_dotenv
 import os
 import requests
-from requests import post, get
 import base64
 import json
 import logging
 from requests.adapters import HTTPAdapter, Retry
-
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", filename='debug.log', filemode='w')
 logger = logging.getLogger(__name__)
@@ -44,112 +42,43 @@ def get_access_token(session):
 def get_auth_header(token):
     return {"Authorization": "Bearer " + token}
 
-def get_artist_id(token, artist_name, session):
-    url = 'https://api.spotify.com/v1/search'
-    headers = get_auth_header(token)
-
-    query = f"?q={artist_name}&type=artist&limit=1"
-    url += query
-    response = session.get(url, headers=headers)
-    json_data = json.loads(response.content)
-    json_data = json_data["artists"]["items"][0]
-    if json_data:
-        artist_id = json_data["id"]
-        artist_name = json_data["name"]
-        logger.info(f"Artist ID for {artist_name} retrieved successfully.")
-        return artist_id, artist_name
-    else:
-        logger.error(f"Failed to retrieve artist ID for {artist_name}.")
-        raise Exception(f"Failed to retrieve artist ID for {artist_name}.")
-
-def get_artist_top_tracks(token, artist_name, session):
-
-    artist_id, artist_name = get_artist_id(token, artist_name, session)
-    if not artist_id:
-        logger.error(f"Artist ID not found for {artist_name}.")
-        raise Exception(f"Artist ID not found for {artist_name}.")
-    logger.info(f"Artist ID for {artist_name} is {artist_id}.")
-
-    url = f'https://api.spotify.com/v1/artists/{artist_id}/top-tracks'
-    headers = get_auth_header(token)
-
-    response = session.get(url, headers=headers, params={"market": "US"})
-    json_data = json.loads(response.content)
-    if "tracks" in json_data:
-        top_tracks = json_data["tracks"]
-        logger.info(f"Top tracks for artist ID {artist_id} retrieved successfully.")
-        return top_tracks
-    else:
-        logger.error(f"Failed to retrieve top tracks for artist ID {artist_id}.")
-        raise Exception(f"Failed to retrieve top tracks for artist ID {artist_id}.")
-
-def get_artist_track_ids(artist_id, token, session):
-    albums = []
-    url = f'https://api.spotify.com/v1/artists/{artist_id}/albums'
-    params = {
-        "include_groups": "album,single", 
-        "limit": 20
-    }
-    headers = get_auth_header(token)
-    response = session.get(url, headers=headers, params=params)
-    json_data = json.loads(response.content)
-    if "items" in json_data:
-        albums = json_data["items"]
-        if "next" in json_data and json_data["next"]:
-            next_url = json_data["next"]
-            while next_url:
-                response = session.get(next_url, headers=headers)
-                json_data = json.loads(response.content)
-                if "items" in json_data:
-                    albums += json_data["items"]
-                next_url = json_data.get("next")
-
-    track_ids = []
-    for album in albums:
-        album_id = album["id"]
-        tracks = get_album_tracks(album_id, token, session)
-        for track in tracks:
-            track_ids.append(track["id"])
-    return track_ids
-
-def get_album_tracks(album_id, token, session):
-    tracks = []
-    url = f'https://api.spotify.com/v1/albums/{album_id}/tracks'
-    headers = get_auth_header(token)
-    response = session.get(url, headers=headers)
-    json_data = json.loads(response.content)
-    if "items" in json_data:
-        tracks = json_data["items"]
-        logger.info(f"Tracks for album ID {album_id} retrieved successfully.")
-        return tracks
-    else:
-        logger.error(f"Failed to retrieve tracks for album ID {album_id}.")
-        raise Exception(f"Failed to retrieve tracks for album ID {album_id}.")
-
 def get_track_data(track_id, token, session):
     url = f'https://api.spotify.com/v1/tracks/{track_id}'
     headers = get_auth_header(token)
     response = session.get(url, headers=headers)
     json_data = json.loads(response.content)
+    image_link = json_data["album"]["images"][0]["url"]
 
-    if "id" in json_data:
+    out_data = {
+        'image_link': image_link,
+        'artist': json_data["artists"][0]["name"],
+        'track_name': json_data["name"],
+        'id': json_data["id"],
+    }
+    if "id" in out_data:
         logger.info(f"Track data for track ID {track_id} retrieved successfully.")
-        return json_data
+        return out_data
     else:
         logger.error(f"Failed to retrieve track data for track ID {track_id}.")
-    
-def get_all_tracks(artist_id, token, session, top_n=-1):
-    all_tracks = []
-    track_ids = get_artist_track_ids(artist_id, token, session)
-    for track_id in track_ids:
-        track_data = get_track_data(track_id, token, session)
-        all_tracks.append(track_data)
 
-    # sort the tracks by popularity
-    all_tracks.sort(key=lambda x: x["popularity"], reverse=True)
+def search_track(track_name, token, session):
+    url = 'https://api.spotify.com/v1/search'
+    headers = get_auth_header(token)
 
-    logger.info(f"All tracks for artist ID {artist_id} retrieved successfully.")
-    return all_tracks[:top_n]
+    query = f"?q={track_name}&type=track&limit=1"
+    url += query
+    response = session.get(url, headers=headers)
+    json_data = json.loads(response.content)
+    json_data = json_data["tracks"]["items"][0]
+    if json_data:
+        track_id = json_data["id"]
+        track_name = json_data["name"]
+        logger.info(f"Track ID for {track_name} retrieved successfully.")
+        return track_id, track_name
+    else:
+        logger.error(f"Failed to retrieve track ID for {track_name}.")
+        raise Exception(f"Failed to retrieve track ID for {track_name}.")
+
 
 if __name__ == "__main__":
 
@@ -168,8 +97,9 @@ if __name__ == "__main__":
 
     # test code
     token = get_access_token(session)
-    artist_name = "dua lipa"
-    artist_id, artist_name = get_artist_id(token, artist_name, session)
-    all_tracks = get_all_tracks(artist_id, token, session, top_n=5)
-    for track in all_tracks:
-        print(f"Track: {track['name']}, Popularity: {track['popularity']}")
+    track_search_term = 'Shape of You'
+    track_id, track_name, artist_name = search_track(track_search_term, token, session)
+    logger.info(f"Track ID: {track_id}, Track Name: {track_name}, artist_name: {artist_name}")
+    data = get_track_data(track_id, token, session)
+    print(data)
+    print(f"Track ID: {track_id}, Track Name: {track_name}")
