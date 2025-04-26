@@ -185,7 +185,6 @@ def generate_esa_vectors(text):
     
     if esa_vectors:
         esa_vectors = np.mean(esa_vectors, axis=0)
-        print(esa_vectors.shape)
         return esa_vectors.tolist()
     else:
         logger.error("No ESA vectors generated.")

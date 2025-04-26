@@ -8,3 +8,7 @@ requests
 scikit-learn
 beautifulsoup4
 sentence-transformers
+fastapi
+uvicorn
+wikipedia-api
+scipy
