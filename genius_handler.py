@@ -1,12 +1,13 @@
 import os
 import logging
 from dotenv import load_dotenv
-import argparse
 import lyricsgenius
 import re
+import concurrent.futures
 # Set up logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", filename='debug.log')
 logger = logging.getLogger(__name__)
+import time
 
 load_dotenv()
 access_token = os.getenv("GENIUS_ACCESS_TOKEN")
@@ -32,86 +33,54 @@ def get_artist_top_tracks(artist_name, top_n=10):
         remove_section_headers=True,
         verbose=False, 
         retries=3,
-        sleep_time=0.5, 
-        timeout=10
+        sleep_time=0.2, 
+        timeout=5
     )
+
+    def get_lyrics(track_name, retries = 3):
+        track_name = clean_title(track_name)
+        for attempt in range(retries):  
+            track = genius.search_song(title=track_name)
+            if track and track.lyrics:
+                lyrics = clean_lyrics(track.lyrics)
+                return lyrics
+            else:
+                logger.info(f"lyrics not found for track {track_name}: Attempt {attempt}")
+        if not track:
+            logger.error(f"track '{track_name}' not found.")
+            return None
+        
+            
     try:
         artist = genius.search_artist(
             artist_name=artist_name,
             max_songs=top_n,
             sort="popularity",
-            get_full_info=True,
+            get_full_info=False,
             per_page=top_n
             )
-        
+        print(artist.songs)
         top_tracks_lyrics = []
-        for song in artist.songs:
-            track_name = song.title
-            track_name = clean_title(track_name)
-            print(f"Processing track: {track_name}, artist: {artist_name}")
-            lyrics = song.lyrics
-            lyrics = clean_lyrics(lyrics)
-            if lyrics:
-                top_tracks_lyrics.append([artist_name, track_name, lyrics])
-            else:
-                logger.error(f"Lyrics for {track_name} not found.")
+        max_workers = min(5, len(artist.songs)) 
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = [executor.submit(get_lyrics, song.title) for song in artist.songs]
+            for future in concurrent.futures.as_completed(futures):
+                result = future.result()
+                if result:
+                    top_tracks_lyrics.append(result)
 
     except Exception as e:
         logger.error(f"Error retrieving top tracks for {artist_name}: {e}")
         return []
-
+    
     return top_tracks_lyrics
 
-def get_lyrics(artist, track_name):
-    genius = lyricsgenius.Genius(
-        access_token=access_token,
-        excluded_terms=["(Remix)", "(Live)"],
-        remove_section_headers=True,
-        verbose=False, 
-        retries=3,
-        sleep_time=0.5, 
-        timeout=10
-    )
-    track_name = clean_title(track_name)
-    track = genius.search_song(title=track_name)
-    print(track)
-    if not track:
-        logger.error(f"track '{track_name}' not found.")
-        raise Exception(f"track '{track_name}' not found.")
-    else:
-        logger.info(f"track '{track_name}' found without artist.")
-        track_name = track.title
-        artist = track.primary_artist.name
-        logger.info(f"Artist for '{track_name}' is '{artist}'.")
-        track = genius.search_song(title=track_name, artist=artist)
-
-    if not track:
-        logger.error(f"track '{track_name}' not found.")
-        return None
-    if track:
-        lyrics = track.lyrics
-        lyrics = clean_lyrics(lyrics)
-        logger.info(f"Lyrics for {track_name} retrieved successfully.")
-        return lyrics
-    else:
-        logger.error(f"Failed to retrieve lyrics for {track_name}.")
-        raise Exception(f"Failed to retrieve lyrics for {track_name}.")
-
 def main():
-    parser = argparse.ArgumentParser(description="Get lyrics for a track by an artist.")
-    parser.add_argument("-a", type=str, help="Artist name")
-    parser.add_argument("-s", type=str, help="track name")
-    args = parser.parse_args()
-
-    artist = args.a
-    track_name = args.s
-
-    try:
-        lyrics = get_lyrics(artist, track_name)
-        print(lyrics)
-    except Exception as e:
-        logger.error(f"Error: {e}", exc_info=True)
-        print(f"Error: {e}")
+    artist = 'Dua Lipa'
+    t1 = time.time()
+    print(get_artist_top_tracks(artist_name=artist))
+    t2 = time.time()
+    print("process time:", t2-t1)
 
 if __name__ == "__main__":
     main()

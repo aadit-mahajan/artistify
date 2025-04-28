@@ -13,6 +13,7 @@ from dotenv import load_dotenv
 import uvicorn
 from pydantic import BaseModel
 import requests
+import time 
 
 import logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", filename='routes.log', filemode='w')
@@ -62,18 +63,22 @@ def generate_soundtrack(request: soundtrack_request):
     artist = request.artist
 
     try:
+        t1 = time.time()
         scenes = split_into_scenes(storyline)
+        t2 = time.time()
         scene_esa_vectors = [np.array(generate_esa_vectors(scene)) for scene in scenes]
+        t3 = time.time()
         story_esa_vector = np.mean(scene_esa_vectors, axis=0)
-
+        t4 = time.time()
         if not artist:
             artist_recommender = ArtistRecommender()
             best_artists = artist_recommender.predict(story_esa_vector)
             best_artist = best_artists[0]
         else:
             best_artist = artist
-
+        t5 = time.time()
         top_tracks = get_artist_top_tracks(best_artist, top_n=len(scenes))
+        t6 = time.time()
         top_track_names = [track[1] for track in top_tracks]
         top_track_lyrics = []
         for track in top_tracks:
@@ -82,11 +87,11 @@ def generate_soundtrack(request: soundtrack_request):
             if lyrics_start_index != -1:
                 lyrics = lyrics[lyrics_start_index + len("lyrics"):].strip()
             top_track_lyrics.append(lyrics)
-
+        t7 = time.time()
         tracks_esa_vectors = [np.array(generate_esa_vectors(lyrics)) for lyrics in top_track_lyrics]
-
+        t8 = time.time()
         assignments, total_similarity, sim_matrix = assign_songs_to_scenes(scene_esa_vectors, tracks_esa_vectors)
-
+        t9 = time.time()
         output_dict = {"Chosen Artist": best_artist}
         for scene_index, track_index in assignments:
             scene_text = scenes[scene_index]
@@ -99,6 +104,20 @@ def generate_soundtrack(request: soundtrack_request):
                 "assigned_song": assigned_song,
                 "similarity_to_song": similarity_to_song
             }
+
+        performance_times = {
+            "scene_split_time": t2 - t1,
+            "esa_vector_generation_time": t3 - t2,
+            "story_esa_vector_time": t4 - t3,
+            "artist_recommendation_time": t5 - t4,
+            "top_tracks_retrieval_time": t6 - t5,
+            "top_track_lyrics_extraction_time": t7 - t6,
+            "tracks_esa_vector_generation_time": t8 - t7,
+            "song_assignment_time": t9 - t8
+        }
+        
+        print("Performance times:", performance_times)
+        logger.info(f"Performance times: {performance_times}")
 
         return JSONResponse(content=output_dict)
 
