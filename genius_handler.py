@@ -5,7 +5,7 @@ import lyricsgenius
 import re
 import concurrent.futures
 # Set up logging
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", filename='debug.log')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", filename='debug.log', filemode="w")
 logger = logging.getLogger(__name__)
 import time
 
@@ -43,14 +43,13 @@ def get_artist_top_tracks(artist_name, top_n=10):
             track = genius.search_song(title=track_name)
             if track and track.lyrics:
                 lyrics = clean_lyrics(track.lyrics)
-                return lyrics
+                return [artist_name, track_name, lyrics]
             else:
                 logger.info(f"lyrics not found for track {track_name}: Attempt {attempt}")
         if not track:
             logger.error(f"track '{track_name}' not found.")
             return None
         
-            
     try:
         artist = genius.search_artist(
             artist_name=artist_name,
@@ -59,7 +58,7 @@ def get_artist_top_tracks(artist_name, top_n=10):
             get_full_info=False,
             per_page=top_n
             )
-        print(artist.songs)
+        
         top_tracks_lyrics = []
         max_workers = min(5, len(artist.songs)) 
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:

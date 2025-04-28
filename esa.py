@@ -8,19 +8,19 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import sent_tokenize, word_tokenize
 from sklearn.metrics.pairwise import cosine_similarity
-from genius_handler import get_lyrics
+# from genius_handler import get_lyrics
 import wikipediaapi
 from nltk.corpus import stopwords
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", filename="debug.log")
 logger = logging.getLogger(__name__)
 
-def load_lyrics(artist_name, track_name):
-    lyrics = get_lyrics(artist=artist_name, track_name=track_name)
-    if not lyrics:
-        logging.error(f"Lyrics not found for {artist_name} - {track_name}.")
-        return None
-    return lyrics
+# def load_lyrics(artist_name, track_name):
+#     lyrics = get_lyrics(artist=artist_name, track_name=track_name)
+#     if not lyrics:
+#         logging.error(f"Lyrics not found for {artist_name} - {track_name}.")
+#         return None
+#     return lyrics
 
 def preprocess_text(text):
     import nltk

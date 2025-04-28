@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from genius_handler import get_artist_top_tracks, get_lyrics
+from genius_handler import get_artist_top_tracks
 from spotify_handler import get_access_token, get_track_data, search_track
 from process_storyline import split_into_scenes
 from esa import generate_esa_vectors
@@ -16,7 +16,7 @@ import requests
 import time 
 
 import logging
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", filename='routes.log', filemode='w')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", filename='debug.log', filemode='w')
 logger = logging.getLogger(__name__)
 load_dotenv()
 
@@ -29,16 +29,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-@app.get("/get_lyrics")
-def get_lyrics_endpoint(artist: str, track_name: str):
-    try:
-        # this is the genius API (doesnt require token)
-        lyrics = get_lyrics(artist, track_name)
-        return JSONResponse(content={"lyrics": lyrics})
-    except Exception as e:
-        logger.error(f"Error retrieving lyrics: {e}")
-        return JSONResponse(content={"error": str(e)}, status_code=500)
 
 @app.get("/get_track_data")
 def get_track_data_endpoint(track_name: str):
@@ -115,7 +105,7 @@ def generate_soundtrack(request: soundtrack_request):
             "tracks_esa_vector_generation_time": t8 - t7,
             "song_assignment_time": t9 - t8
         }
-        
+
         print("Performance times:", performance_times)
         logger.info(f"Performance times: {performance_times}")
 
