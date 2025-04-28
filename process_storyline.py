@@ -63,61 +63,6 @@ def lemmatize_corpus(output_file="./corpus/lemmatized_corpus.json"):
         logging.error(f"Failed to save lemmatized corpus: {e}")
 
 
-# def generate_esa_vectors_for_story(story):
-#     logging.info("Generating ESA vectors for story.")
-#     corpus = load_corpus("./corpus/lemmatized_corpus.json")
-#     if not corpus:
-#         logging.error("Corpus is empty or could not be loaded.")
-#         return [], []
-#
-#     sentences = sent_tokenize(clean_text(story))
-#     processed_sentences = [preprocess_sentence(s) for s in sentences]
-#     processed_corpus = list(corpus.values())
-#     all_documents = processed_sentences + processed_corpus
-#
-#     vectorizer = TfidfVectorizer(stop_words="english")
-#     tfidf_mat = vectorizer.fit_transform(all_documents)
-#
-#     esa_vectors = []
-#     for i in range(len(processed_sentences)):
-#         similarities = cosine_similarity(tfidf_mat[i:i+1], tfidf_mat[len(processed_sentences):])
-#         esa_vector = similarities.flatten()
-#         esa_vectors.append(esa_vector)
-#
-#     return sentences, esa_vectors
-#
-#
-# def group_sentences_into_scenes(sentences, esa_vectors, similarity_threshold=0.15):
-#     scenes = []
-#     current_scene = [sentences[0]]
-#     current_scene_vectors = [esa_vectors[0]]
-#
-#     for i in range(1, len(sentences)):
-#         vec1 = esa_vectors[i - 1]
-#         vec2 = esa_vectors[i]
-#         sim = cosine_similarity([vec1], [vec2])[0][0]
-#         # print(f"Sentence {i}: {sentences[i]}")
-#         # print(f"Similarity with previous sentence: {sim}")
-#
-#         if sim >= similarity_threshold:
-#             current_scene.append(sentences[i])
-#             current_scene_vectors.append(vec2)
-#         else:
-#             scene_text = " ".join(current_scene)
-#             scene_vector = np.mean(current_scene_vectors, axis=0)
-#             scenes.append((scene_text, scene_vector))
-#
-#             current_scene = [sentences[i]]
-#             current_scene_vectors = [vec2]
-#
-#     if current_scene:
-#         scene_text = " ".join(current_scene)
-#         scene_vector = np.mean(current_scene_vectors, axis=0)
-#         scenes.append((scene_text, scene_vector))
-#
-#     return scenes
-
-
 def split_into_scenes(text, similarity_threshold=0.8, min_scene_length=3):
     sentences = sent_tokenize(clean_text(text))
     embeddings = model.encode(sentences)

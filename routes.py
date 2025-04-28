@@ -1,4 +1,5 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from genius_handler import get_artist_top_tracks, get_lyrics
 from spotify_handler import get_access_token, get_track_data, search_track
@@ -10,6 +11,7 @@ from generate_soundtrack import assign_songs_to_scenes
 from typing import Optional
 from dotenv import load_dotenv
 import uvicorn
+from pydantic import BaseModel
 import requests
 
 import logging
@@ -18,6 +20,14 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware, 
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/get_lyrics")
 def get_lyrics_endpoint(artist: str, track_name: str):
@@ -42,9 +52,15 @@ def get_track_data_endpoint(track_name: str):
         logger.error(f"Error retrieving track data: {e}")
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
-@app.get("/generate_soundtrack")
-def generate_soundtrack(storyline: str,
-                        artist: Optional[str] = Query(default=None, description="Optional artist to use for soundtrack. If not provided, we will recommend the best artist.")):
+class soundtrack_request(BaseModel):
+    storyline: str
+    artist: Optional[str] = None
+
+@app.post("/generate_soundtrack")
+def generate_soundtrack(request: soundtrack_request):
+    storyline = request.storyline
+    artist = request.artist
+
     try:
         scenes = split_into_scenes(storyline)
         scene_esa_vectors = [np.array(generate_esa_vectors(scene)) for scene in scenes]

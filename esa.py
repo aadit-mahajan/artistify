@@ -1,9 +1,3 @@
-import nltk
-
-nltk.download("punkt")
-nltk.download("wordnet")
-nltk.download("stopwords")
-
 import json
 import logging
 import pandas as pd
