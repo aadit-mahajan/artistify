@@ -1,0 +1,41 @@
+schema: '2.0'
+stages:
+  scrape_artists:
+    cmd: python dvc_scrape_artists.py
+    outs:
+    - path: scraped_artists.txt
+      hash: md5
+      md5: 21d7fd17019356c5178608130592c839
+      size: 1266
+  fetch_artist_lyrics:
+    cmd: python dvc_fetch_artist_lyrics.py
+    deps:
+    - path: scraped_artists.txt
+      hash: md5
+      md5: 21d7fd17019356c5178608130592c839
+      size: 1266
+    outs:
+    - path: scraped_artist_data.csv
+      hash: md5
+      md5: 4db61f34236423c5553cc3d485db9bc5
+      size: 1882250
+  generate_esa_vectors:
+    cmd: python dvc_generate_esa_vectors.py
+    deps:
+    - path: esa.py
+      hash: md5
+      md5: 3eaf21d957a030b123b07c211c602bf7
+      size: 7315
+    - path: scraped_artist_data.csv
+      hash: md5
+      md5: 4db61f34236423c5553cc3d485db9bc5
+      size: 1882250
+    outs:
+    - path: metrics.json
+      hash: md5
+      md5: 45b26dcd03ba072439c73d158e0e780b
+      size: 80
+    - path: scraped_esa_vectors_all_lyrics.csv
+      hash: md5
+      md5: 7efd309e1172a1255b2365bc7a312cac
+      size: 2974500

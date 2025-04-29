@@ -17,6 +17,6 @@ stages:
       - scraped_artist_data.csv
       - esa.py
     outs:
-      - esa_vectors_all_lyrics.csv
+      - scraped_esa_vectors_all_lyrics.csv
     metrics:
       - metrics.json
