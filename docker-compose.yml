@@ -1,0 +1,63 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: backend
+    ports:
+      - "12000:12000"
+      - "9000:9000"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    depends_on:
+      - backend
+      - ngrok-backend
+    ports:
+      - "8080:80"
+
+  prometheus:
+    container_name: prometheus-server
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.external-url=http://localhost:9090'
+      - '--web.enable-lifecycle'
+
+  grafana:
+    container_name: grafana-server
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/var/lib/grafana
+
+  ngrok-frontend:
+    image: ngrok/ngrok:alpine
+    container_name: ngrok-frontend
+    depends_on:
+      - backend
+    environment:
+      - NGROK_AUTHTOKEN=2vc81UgITl8UcudEagK3moOnUbc_2fRC4Hpggm7MZXs6UKUH
+    command: >
+      http --domain=secondly-supreme-haddock.ngrok-free.app frontend:80
+    ports:
+      - "4040:4040"
+
+  ngrok-backend:
+    image: ngrok/ngrok:alpine
+    container_name: ngrok-backend
+    depends_on:
+      - backend
+    environment:
+      - NGROK_AUTHTOKEN=2wPjaQbN60VWzpLEyjvJf72IIee_2JRaxb1QMjQMRR3txpBcs
+    command: >
+      http --domain=alert-glider-annually.ngrok-free.app backend:12000
+    ports:
+      - "4041:4040"
