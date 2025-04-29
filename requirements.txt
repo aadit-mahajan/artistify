@@ -13,3 +13,4 @@ uvicorn
 wikipedia-api
 scipy
 mlflow
+dvc

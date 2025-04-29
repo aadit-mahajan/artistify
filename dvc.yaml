@@ -1,0 +1,22 @@
+stages:
+  scrape_artists:
+    cmd: python scrape_artists.py
+    outs:
+      - scraped_artists.txt
+
+  fetch_artist_lyrics:
+    cmd: python fetch_artist_lyrics.py
+    deps:
+      - scraped_artists.txt
+    outs:
+      - scraped_artist_data.csv
+
+  generate_esa_vectors:
+    cmd: python generate_esa_vectors.py
+    deps:
+      - scraped_artist_data.csv
+      - esa.py
+    outs:
+      - esa_vectors_all_lyrics.csv
+    metrics:
+      - metrics.json
