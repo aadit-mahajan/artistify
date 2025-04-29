@@ -63,7 +63,7 @@ def lemmatize_corpus(output_file="./corpus/lemmatized_corpus.json"):
         logging.error(f"Failed to save lemmatized corpus: {e}")
 
 
-def split_into_scenes(text, similarity_threshold=0.8, min_scene_length=3):
+def split_into_scenes(text, similarity_threshold=0.7, min_scene_length=2):
     sentences = sent_tokenize(clean_text(text))
     embeddings = model.encode(sentences)
 
