@@ -44,9 +44,9 @@ services:
     depends_on:
       - backend
     environment:
-      - NGROK_AUTHTOKEN=2vc81UgITl8UcudEagK3moOnUbc_2fRC4Hpggm7MZXs6UKUH
-    command: >
-      http --domain=secondly-supreme-haddock.ngrok-free.app frontend:80
+      - NGROK_AUTHTOKEN= #your NGROK AUTHTOKEN Here
+    command: >  # change this to your frontend ngrok domain
+      http --domain=secondly-supreme-haddock.ngrok-free.app frontend:80  
     ports:
       - "4040:4040"
 
@@ -56,8 +56,8 @@ services:
     depends_on:
       - backend
     environment:
-      - NGROK_AUTHTOKEN=2wPjaQbN60VWzpLEyjvJf72IIee_2JRaxb1QMjQMRR3txpBcs
-    command: >
+      - NGROK_AUTHTOKEN=  #your ngrok authtoken here
+    command: >   # change this to your backend ngrok domain
       http --domain=alert-glider-annually.ngrok-free.app backend:12000
     ports:
       - "4041:4040"
