@@ -8,8 +8,24 @@ Since this application is designed as a web application, this setup is a one-tim
 The places where the API keys have to be added have been marked in the following files for your convenience.            
                     
 Once you have the API keys, add them to the following files:        
-1. Spotify and Genius API keys have to be added to the ".env" file in the backend folder.           
-2. Ngrok API keys have to be added to the docker-compose.yml in the main directory. 
+1. Spotify and Genius API keys have to be added to the ".env" file in the backend folder. You will see something like this:
+           
+SPOTIFY_CLIENT_ID=""   # enter your Spotify API client ID here          
+SPOTIFY_CLIENT_SECRET=""  # enter your Spotify API Secret here          
+GENIUS_CLIENT_ID=""   # Enter your Genius API ID here              
+GENIUS_CLIENT_SECRET=""    # Enter your Genius API Secret here        
+GENIUS_ACCESS_TOKEN=""    # Enter your Genius API Access Token Here          
+
+Add the respective keys inside the inverted commas. 
+          
+2. Ngrok API keys have to be added to the docker-compose.yml in the main directory. Once you open the docker-compose.yml you should see something like this:
+
+environment:          
+             - NGROK_AUTHTOKEN= #your NGROK AUTHTOKEN Here            
+          
+Add this ngrok authtoken for both instances and replace the domain name with your domain for backend and frontend.       
+      
+And that's it! Build the application using "docker compose up --build" and access it on your domain.     
 
 ## System Objectives
 - Automatically generate scene-wise music assignments from a storyline.
