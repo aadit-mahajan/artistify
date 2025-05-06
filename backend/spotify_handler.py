@@ -15,10 +15,25 @@ client_id = os.getenv("SPOTIFY_CLIENT_ID")
 client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
 
 def get_access_token(session):
-    auth_string = client_id + ":" + client_secret
+    '''
+    Get the access token for Spotify API using client credentials. 
+    Make sure to set the environment variables SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET for this to work.
+    This function uses the client credentials flow to obtain an access token.
+    Args:
+        session (requests.Session): The requests session to use for the API call.
+    Returns:
+        str: The access token.
+    '''
+    if not client_id or not client_secret:
+        logger.error("Client ID or Client Secret not set in environment variables.")
+        raise Exception("Client ID or Client Secret not set in environment variables.")
+    
+    # setup the auth string
+    auth_string = client_id + ":" + client_secret   
     auth_bytes = auth_string.encode("utf-8")
     auth_b64 = str(base64.b64encode(auth_bytes), "utf-8")
 
+    # make the request to get the access token
     url = "https://accounts.spotify.com/api/token"
     headers = {
         "Authorization": "Basic " + auth_b64,
@@ -40,15 +55,29 @@ def get_access_token(session):
         raise Exception("Failed to retrieve access token.")
     
 def get_auth_header(token):
+    '''
+    Helper function to get the authorization header for Spotify API requests.
+    '''
     return {"Authorization": "Bearer " + token}
 
 def get_track_data(track_id, token, session):
+    '''
+    Gets the track data for a given track ID from the Spotify API.
+    Args:
+        track_id (str): The ID of the track to retrieve data for.
+        token (str): The access token for Spotify API.
+        session (requests.Session): The requests session to use for the API call.
+    Returns:
+        dict: A dictionary containing the track data, including image link, artist name, track name, and track ID.
+    '''
+    # make the request to get the track data
     url = f'https://api.spotify.com/v1/tracks/{track_id}'
     headers = get_auth_header(token)
     response = session.get(url, headers=headers)
     json_data = json.loads(response.content)
     image_link = json_data["album"]["images"][0]["url"]
 
+    # create the output data dictionary
     out_data = {
         'image_link': image_link,
         'artist': json_data["artists"][0]["name"],
@@ -62,6 +91,16 @@ def get_track_data(track_id, token, session):
         logger.error(f"Failed to retrieve track data for track ID {track_id}.")
 
 def search_track(track_name, token, session):
+    '''
+    Search for a track by name using the Spotify API.
+    Args:
+        track_name (str): The name of the track to search for.
+        token (str): The access token for Spotify API.
+        session (requests.Session): The requests session to use for the API call.
+    Returns:
+        tuple: A tuple containing the track ID and track name.
+    '''
+    # make the request to search for the track
     url = 'https://api.spotify.com/v1/search'
     headers = get_auth_header(token)
 
@@ -70,6 +109,8 @@ def search_track(track_name, token, session):
     response = session.get(url, headers=headers)
     json_data = json.loads(response.content)
     json_data = json_data["tracks"]["items"][0]
+
+    # return the track ID and track name
     if json_data:
         track_id = json_data["id"]
         track_name = json_data["name"]

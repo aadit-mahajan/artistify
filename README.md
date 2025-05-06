@@ -1,6 +1,16 @@
 ## Overview
 **artistify** is a soundtrack generation system that takes a textual narrative, segments it into scenes, detects the emotional *vibe* of each scene, and assigns appropriate songs using semantic similarity. It integrates NLP-based processing with ESA vector space modelling and artist-specific lyric retrieval to recommend the best musical match for each scene.
 
+## Run Instructions:
+You will need a few API Keys to run this application as it makes use of three different services: ngrok, Spotify and Genius.            
+Specifically you will need 2 ngrok tokens, one each for frontend API and backend API.       
+Since this application is designed as a web application, this setup is a one-time setup and the rest is handled on request basis.       
+The places where the API keys have to be added have been marked in the following files for your convenience.            
+                    
+Once you have the API keys, add them to the following files:        
+1. Spotify and Genius API keys have to be added to the ".env" file in the backend folder.           
+2. Ngrok API keys have to be added to the docker-compose.yml in the main directory. 
+
 ## System Objectives
 - Automatically generate scene-wise music assignments from a storyline.
 - Allow optional artist input to personalise the song recommendations.

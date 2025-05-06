@@ -19,6 +19,13 @@ def clean_title(title):
     return title.strip()
 
 def clean_lyrics(lyrics):
+    '''
+    Clean the lyrics by removing unwanted characters and formatting.
+    Args:
+        lyrics (str): The input lyrics to clean.
+    Returns:
+        str: The cleaned lyrics.
+    '''
     disallowed_chars = re.compile(r"[^a-zA-Z0-9\s.,!?\"\'()\-:;]")
     lyrics = disallowed_chars.sub("", lyrics)
     lyrics = lyrics.replace("\n", " ")
@@ -27,6 +34,15 @@ def clean_lyrics(lyrics):
     return lyrics
 
 def get_artist_top_tracks(artist_name, top_n=10):
+    '''
+    Fetch the top tracks of an artist from Genius and return their lyrics.
+    Args:
+        artist_name (str): The name of the artist.
+        top_n (int): The number of top tracks to fetch.
+    Returns:
+        list: A list of tuples containing artist name, track name, and lyrics.
+    '''
+
     genius = lyricsgenius.Genius(
         access_token=access_token,
         excluded_terms=["(Remix)", "(Live)"],
@@ -35,14 +51,22 @@ def get_artist_top_tracks(artist_name, top_n=10):
         retries=3,
         sleep_time=0.2, 
         timeout=5
-    )
+    )                                               # Genius API client
 
     def get_lyrics(track_name, retries = 3):
-        track_name = clean_title(track_name)
+        '''
+        Helper function to fetch lyrics for a given track name.
+        Args:
+            track_name (str): The name of the track.
+            retries (int): Number of retry attempts.
+        Returns:
+            list: A list containing artist name, track name, and lyrics.
+        '''
+        track_name = clean_title(track_name)    # remove unwanted characters
         for attempt in range(retries):  
-            track = genius.search_song(title=track_name)
+            track = genius.search_song(title=track_name)    # search for the song
             if track and track.lyrics:
-                lyrics = clean_lyrics(track.lyrics)
+                lyrics = clean_lyrics(track.lyrics)         # clean the lyrics
                 return [artist_name, track_name, lyrics]
             else:
                 logger.info(f"lyrics not found for track {track_name}: Attempt {attempt}")
@@ -57,10 +81,11 @@ def get_artist_top_tracks(artist_name, top_n=10):
             sort="popularity",
             get_full_info=False,
             per_page=top_n
-            )
+            )   # search for the artist
         
         top_tracks_lyrics = []
         max_workers = min(5, len(artist.songs)) 
+        # limit the number of threads to the number of songs
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures = [executor.submit(get_lyrics, song.title) for song in artist.songs]
             for future in concurrent.futures.as_completed(futures):

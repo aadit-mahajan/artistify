@@ -17,11 +17,14 @@ import time
 from prometheus_client import start_http_server, Gauge, Counter
 
 import logging
+# setting up logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", filename='debug.log', filemode='w')
 logger = logging.getLogger(__name__)
 load_dotenv()
 
-app = FastAPI()
+app = FastAPI() # Create FastAPI instance
+# CORS middleware to allow cross-origin requests
+# This is important for the frontend to be able to communicate with the backend as both are running on different API endpoints
 
 app.add_middleware(
     CORSMiddleware, 
@@ -62,6 +65,26 @@ class soundtrack_request(BaseModel):
 
 @app.post("/generate_soundtrack")
 def generate_soundtrack(request: soundtrack_request):
+    '''
+    This is the main function that generates the soundtrack for the given storyline.
+    Performs the following steps:
+    1. Splits the storyline into scenes.
+    2. Generates ESA vectors for each scene.
+    3. Generates ESA vector for the entire story.
+    4. Recommends an artist based on the story ESA vector.
+    5. Retrieves the top tracks of the recommended artist.
+    6. Extracts the lyrics of the top tracks.
+    7. Generates ESA vectors for the top tracks.
+    8. Assigns the top tracks to the scenes based on similarity.
+    9. Returns the assigned tracks and their similarity to the scenes.
+
+    Tracking the time taken for each step using Prometheus metrics.
+
+    Args:
+        request (soundtrack_request): The request object containing the storyline and artist name.
+    Returns:
+        JSONResponse: A JSON response containing the assigned tracks and their similarity to the scenes.
+    '''
     storyline = request.storyline
     artist = request.artist
 

@@ -1,4 +1,4 @@
-<insert_name?default=artistify>
+Artistify (Initial Idea Document)
 
 Input data: 
 1. Movies:

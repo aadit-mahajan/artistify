@@ -15,14 +15,18 @@ from nltk.corpus import stopwords
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", filename="debug.log")
 logger = logging.getLogger(__name__)
 
-# def load_lyrics(artist_name, track_name):
-#     lyrics = get_lyrics(artist=artist_name, track_name=track_name)
-#     if not lyrics:
-#         logging.error(f"Lyrics not found for {artist_name} - {track_name}.")
-#         return None
-#     return lyrics
 
 def preprocess_text(text):
+
+    '''
+    Preprocess the text by tokenizing, removing stop words, and lemmatizing.
+    Args:
+        text (str): The input text to preprocess.
+    Returns:
+        str: The preprocessed text.
+    '''
+
+    # Ensure nltk data is available when called by the Spark job later. 
     import nltk
     from nltk.tokenize import word_tokenize
     from nltk.corpus import stopwords
@@ -32,8 +36,8 @@ def preprocess_text(text):
 
     if not text:
         return ""
-
-    tokens = word_tokenize(text.lower())
+    # Tokenize the text
+    tokens = word_tokenize(text.lower()) 
     tokens = [word for word in tokens if word.isalnum()]
     tokens = [word for word in tokens if word not in stopwords.words("english")]
     
@@ -43,13 +47,29 @@ def preprocess_text(text):
     return " ".join(tokens)  # Return as a string
 
 def clean_text(text):
+    '''
+    Clean the text by removing non-alphanumeric characters and converting to lowercase.
+    (helper function)
+    '''
     text = re.sub(r"\W+", " ", text.lower())
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
 def create_and_save_corpus(topics_file="topics.csv", output_dir="corpus", force_recreate=False):
+    '''
+    Create and save the corpus from Wikipedia articles.
+    Args:
+        topics_file (str): Path to the CSV file containing Wikipedia article titles.
+        output_dir (str): Directory to save the corpus.
+        force_recreate (bool): If True, force recreate the corpus even if it exists.
+    Returns:
+        None
+    '''
+
+    # initial checks
     logger.info("Starting the process to create and save the corpus.")
     output_file = os.path.join(output_dir, "corpus.json")
+
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
         logger.info(f"Output directory {output_dir} created.")
@@ -72,11 +92,12 @@ def create_and_save_corpus(topics_file="topics.csv", output_dir="corpus", force_
         user_agent="artistify_wiki_user", 
         language="en", 
         extract_format=wikipediaapi.ExtractFormat.WIKI
-    )
+    )  # Initialize Wikipedia API
     
     topics = pd.read_csv(topics_file)
     wiki_titles = topics["Wikipedia Article"].tolist()
     
+    # fetch and clean Wikipedia articles
     corpus_dict = {}
     for topic in wiki_titles:
         page = wiki.page(topic)
@@ -95,6 +116,14 @@ def create_and_save_corpus(topics_file="topics.csv", output_dir="corpus", force_
         logger.error(f"Failed to save corpus to {output_file}: {e}")
 
 def load_corpus(corpus_file="corpus/corpus.json"):
+    '''
+    Load the corpus from a JSON file.
+    Args:
+        corpus_file (str): Path to the JSON file containing the corpus.
+    Returns:
+        dict: The loaded corpus as a dictionary.
+    '''
+
     try:
         with open(corpus_file, "r") as file:
             corpus_dict = json.load(file)
@@ -105,6 +134,13 @@ def load_corpus(corpus_file="corpus/corpus.json"):
         return {}
 
 def lemmatize_corpus(output_dir="corpus"):
+    '''
+    Lemmatize the corpus and save it to a JSON file.
+    Args:
+        output_dir (str): Directory to save the lemmatized corpus.
+    Returns:
+        None
+    '''
     os.makedirs(output_dir, exist_ok=True)
     output_file = os.path.join(output_dir, "lemmatized_corpus.json")
     logger.info("Starting the lemmatization process.")
@@ -127,35 +163,14 @@ def lemmatize_corpus(output_dir="corpus"):
         logger.error(f"Failed to save lemmatized corpus: {e}")
 
 def generate_esa_vectors(text):
-    # logger.info("Generating ESA vectors.")
-
-    # corpus = load_corpus(corpus_file="corpus/lemmatized_corpus.json")
-    # if not corpus:
-    #     logger.error("Corpus is empty or could not be loaded.")
-    #     return None
-
-    # lyrics = preprocess_lyrics(lyrics)
+    '''
+    Generate ESA vectors for the given text using the lemmatized corpus.
+    Args:
+        text (str): The input text to generate ESA vectors for.
+    Returns:
+        list: The ESA vectors for the input text.
+    '''
     
-    # if not lyrics.strip():
-    #     logger.error("Lyrics are empty after preprocessing.")
-    #     return None
-
-    # all_text = [lyrics] + list(corpus.values())
-
-    # vectorizer = TfidfVectorizer(stop_words="english")
-    # tfidf_mat = vectorizer.fit_transform(all_text)
-
-    # if tfidf_mat.shape[0] <= 1:
-    #     logger.error("Not enough documents in TF-IDF matrix to compute ESA vectors.")
-    #     return None
-
-    # similarities = cosine_similarity(tfidf_mat[0:1], tfidf_mat[1:])
-
-    # esa_vector = np.zeros(len(corpus))  
-    # for i, sim in enumerate(similarities[0]):
-    #     esa_vector[i] = sim
-
-    # return esa_vector
     logger.info("Generating ESA vectors for artist.")
     
     corpus = load_corpus('./corpus/lemmatized_corpus.json')
@@ -163,40 +178,42 @@ def generate_esa_vectors(text):
         logger.error("Corpus is empty or could not be loaded.")
         return [], []
 
+    # preprocessing 
     sentences = sent_tokenize(text)
     processed_sentences = [preprocess_text(s) for s in sentences]
     processed_corpus = list(corpus.values())
     all_documents = processed_sentences + processed_corpus
 
-    vectorizer = TfidfVectorizer(stop_words="english")
-    tfidf_matrix = vectorizer.fit_transform(all_documents)
+    vectorizer = TfidfVectorizer(stop_words="english")          # Create a TF-IDF vectorizer
+    tfidf_matrix = vectorizer.fit_transform(all_documents)      # Fit and transform the documents
 
     esa_vectors = []
+    # Generate ESA vectors for each processed sentence
     for i in range(len(processed_sentences)):
         similarities = cosine_similarity(tfidf_matrix[i:i+1], tfidf_matrix[len(processed_sentences):])
         esa_vector = similarities.flatten()
         esa_vectors.append(esa_vector)
     
-    if esa_vectors:
+    if esa_vectors:         # ESA vectors are generated
         esa_vectors = np.mean(esa_vectors, axis=0)
         return esa_vectors.tolist()
     else:
         logger.error("No ESA vectors generated.")
     return []
 
-if __name__ == "__main__":
-    create_and_save_corpus()
+# if __name__ == "__main__":
+#     create_and_save_corpus()
 
-    lemmatize_corpus()
+#     lemmatize_corpus()
 
-    lem_corp_path = os.path.join("corpus", "lemmatized_corpus.json")
+#     lem_corp_path = os.path.join("corpus", "lemmatized_corpus.json")
 
-    lyrics = load_lyrics("Rascal Flatts", "Life is a highway")
-    if lyrics:
-        esa_vector = generate_esa_vectors(lyrics)
-        keys = load_corpus(corpus_file=lem_corp_path).keys()
-        if esa_vector is not None:
-            for i, key in enumerate(keys):
-                print(f"Similarity with {key}: {esa_vector[i]}")
-        else:
-            logger.error("ESA vector generation failed.")
+#     lyrics = load_lyrics("Rascal Flatts", "Life is a highway")
+#     if lyrics:
+#         esa_vector = generate_esa_vectors(lyrics)
+#         keys = load_corpus(corpus_file=lem_corp_path).keys()
+#         if esa_vector is not None:
+#             for i, key in enumerate(keys):
+#                 print(f"Similarity with {key}: {esa_vector[i]}")
+#         else:
+#             logger.error("ESA vector generation failed.")

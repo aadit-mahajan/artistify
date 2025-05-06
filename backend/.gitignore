@@ -2,3 +2,4 @@
 test.ipynb
 mlruns
 *.dvc
+.env

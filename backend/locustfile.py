@@ -1,5 +1,5 @@
 from locust import HttpUser, task, between
-
+# this script was used to test the performance of the API
 class testUser(HttpUser):
     wait_time = between(1, 2)
 

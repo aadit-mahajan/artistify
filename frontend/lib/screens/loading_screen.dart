@@ -21,11 +21,14 @@ class _LoadingScreenState extends State<LoadingScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Error'),
+        title: const Text('Something went wrong'),
         content: Text(message),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () {
+              Navigator.of(context).pop(); // Close dialog
+              Navigator.of(context).pop(); // Go back to home screen
+            },
             child: const Text('OK'),
           ),
         ],
@@ -33,7 +36,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
     );
   }
 
-  Future<String?> _fetchImageUrl(String song) async {
+  Future<Map<String, String>?> _fetchImageAndArtist(String song) async {
     try {
       final response = await http.get(
         Uri.parse('https://alert-glider-annually.ngrok-free.app/get_track_data?track_name=$song'),
@@ -42,23 +45,25 @@ class _LoadingScreenState extends State<LoadingScreen> {
           'Accept': 'application/json',
           'ngrok-skip-browser-warning': 'skip-browser-warning',
         },
-
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final imageUrl = data['track_data']['image_link'] ?? '';
-        print('Image URL: $imageUrl');
-        return imageUrl; // Return the image URL
-        // Use the imageUrl as needed
+        final artist = data['track_data']['artist'] ?? 'Unknown Artist';
+        return {
+          'image_url': imageUrl,
+          'artist': artist,
+        };
       } else {
-        _showError('Failed to fetch image URL: ${response.statusCode}');
+        _showError('We couldn\'t fetch song details for "$song". Skipping this song.');
       }
     } catch (e) {
-      _showError('An error occurred: $e');
+      _showError('Network issue while fetching details for "$song". Please try again later.');
     }
     return null;
   }
+
 
   @override
   void initState() {
@@ -67,36 +72,37 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 
   Future<void> _simulateApiCall() async {
-    try{
-      final response = await http.post(
-        Uri.parse('https://alert-glider-annually.ngrok-free.app/generate_soundtrack'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'ngrok-skip-browser-warning': 'skip-browser-warning',
-        },
-        body: jsonEncode({
-          'storyline': widget.story,
-          'artist': widget.artist ?? '', // Pass artist if provided
-        }),
-      );
+  try {
+    final response = await http.post(
+      Uri.parse('https://alert-glider-annually.ngrok-free.app/generate_soundtrack'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'ngrok-skip-browser-warning': 'skip-browser-warning',
+      },
+      body: jsonEncode({
+        'storyline': widget.story,
+        'artist': widget.artist ?? '',
+      }),
+    );
 
-      if (response.statusCode == 200) {
+    if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-
+      var artist = data['Chosen artist'] ?? 'Unknown Artist';
       final List<Map<String, String>> sceneTrackPairs = [];
 
-      // fetch image urls for each track
       for (var entry in data.entries) {
         var key = entry.key;
         var value = entry.value;
         if (key.startsWith('Scene')) {
-          final imageUrl = await _fetchImageUrl(value['assigned_song'] ?? '');
-          print('Image URL: $imageUrl');
+          final data = await _fetchImageAndArtist(value['assigned_song'] ?? '');
+          final imageUrl = data?['image_url'] ?? '';
+          artist = data?['artist'] ?? 'Unknown Artist';
           sceneTrackPairs.add({
             'scene': value['scene_text'] ?? '',
             'track': value['assigned_song'] ?? '',
-            'image_url': imageUrl ?? '',
+            'image_url': imageUrl,
+            'artist': artist,
           });
         }
       }
@@ -111,11 +117,14 @@ class _LoadingScreenState extends State<LoadingScreen> {
         ),
       );
     } else {
-      _showError('Server error: ${response.statusCode}');
+      _showError(
+        'Oops! We couldn\'t generate your soundtrack at the moment. Please try again later.',
+      );
     }
-  } 
-  catch (e) {
-    _showError('An error occurred: $e');
+  } catch (e) {
+    _showError(
+      'Something went wrong while connecting to the server. Please check your internet connection and try again.',
+    );
   }
 }
 

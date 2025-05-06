@@ -100,8 +100,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     style: GoogleFonts.notoSans(color: Colors.white),
                                   ),
                                   content: Text(
-                                    'Simply type or paste a description of a scene, a short story, or even just a mood into the text box below. Optionally, provide your favorite artist. \n\n Not able to decide on your artist of choice? We will recommend the one that fits your story the best! \n\n Once done, simply click "Generate Soundtrack"! and wait for the magic to happen.',
-                                    style: GoogleFonts.notoSans(color: Colors.white70),
+                                    'Simply type or paste a description of a scene, a short story, or even just a mood into the text box below. Optionally, provide your favorite artist. \n\n Not able to decide on your artist of choice? We will recommend the one that fits your story the best! \n\n Once done, simply click "Generate Soundtrack"! and wait for the magic to happen. \n \n Note: Only English Artists and Storylines are supported for now due to the language model\'s limitations.',
+                                    style: GoogleFonts.notoSans(color: Colors.white),
                                   ),
                                   actions: <Widget>[
                                     TextButton(

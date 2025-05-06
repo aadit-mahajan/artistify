@@ -53,6 +53,7 @@ class ResultScreen extends StatelessWidget {
                       color: Colors.white,
                     ),
                   ),
+                
                   const SizedBox(height: 16),
                   Expanded(
                     child: ListView.separated(
@@ -62,14 +63,11 @@ class ResultScreen extends StatelessWidget {
                         final scene = sceneTrackPairs[index]['scene'] ?? 'Unknown Scene';
                         final fullTrack = sceneTrackPairs[index]['track'] ?? 'Unknown Track';
                         final imageUrl = sceneTrackPairs[index]['image_url'];
-
-                        // Parse artist and track title if available
-                        String artist = '';
+                        final artist = sceneTrackPairs[index]['artist'] ?? 'Unknown Artist';
                         String trackTitle = fullTrack;
                         if (fullTrack.contains(' - ')) {
                           final parts = fullTrack.split(' - ');
                           if (parts.length >= 2) {
-                            artist = parts[0];
                             trackTitle = parts[1];
                           }
                         }
@@ -157,12 +155,13 @@ class ResultScreen extends StatelessWidget {
                                                 Flexible(
                                                   child: Text(
                                                     artist,
-                                                    style: GoogleFonts.poppins(
+                                                    style: GoogleFonts.notoSans(
                                                       fontSize: 14,
                                                       fontWeight: FontWeight.bold,
                                                       color: Colors.white,
                                                     ),
                                                     textAlign: TextAlign.right,
+                                                    overflow: TextOverflow.visible,
                                                   ),
                                                 ),
                                               ],
@@ -177,12 +176,13 @@ class ResultScreen extends StatelessWidget {
                                               Flexible(
                                                 child: Text(
                                                   trackTitle,
-                                                  style: GoogleFonts.poppins(
+                                                  style: const TextStyle(
                                                     fontSize: 14,
                                                     fontStyle: FontStyle.italic,
                                                     color: Colors.white,
                                                   ),
                                                   textAlign: TextAlign.right,
+                                                  overflow: TextOverflow.visible, 
                                                 ),
                                               ),
                                             ],
